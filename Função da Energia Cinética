@@ -1,0 +1,63 @@
+public class CondicaoContorno : MonoBehaviour
+{
+    public Transform posicaoOrigem;
+    public float massa = 1.0f; // Definir a massa do objeto
+    public LineRenderer energyGraph; // Use LineRenderer para criar o gráfico
+    private List<Vector2> energyPoints = new List<Vector2>(); // Lista de pontos do gráfico
+    private float currentTime = 0f; // Tempo para plotagem no eixo x
+    public float timeInterval = 0.5f; // Intervalo de tempo para coletar dados
+
+    void Start()
+    {
+        // Inicializa a posição do gráfico
+        energyGraph.positionCount = 0;
+    }
+
+    void Update()
+    {
+        CheckBounds();
+        PlotKineticEnergy();
+    }
+
+    // Função para calcular a energia cinética
+    float CalcularEnergiaCinetica() 
+    {
+        Vector3 velocidade = GetComponent<Rigidbody>().velocity;
+        return 0.5f * massa * velocidade.sqrMagnitude;
+    }
+
+    // Função para plotar o gráfico da energia cinética
+    void PlotKineticEnergy()
+    {
+        currentTime += Time.deltaTime;
+
+        // Apenas adiciona pontos a cada timeInterval
+        if (currentTime >= timeInterval)
+        {
+            float energiaCinetica = CalcularEnergiaCinetica();
+            energyPoints.Add(new Vector2(currentTime, energiaCinetica));
+
+            // Atualiza o LineRenderer com os pontos
+            energyGraph.positionCount = energyPoints.Count;
+            for (int i = 0; i < energyPoints.Count; i++)
+            {
+                energyGraph.SetPosition(i, new Vector3(energyPoints[i].x, energyPoints[i].y, 0));
+            }
+
+            currentTime = 0f; // Resetar tempo
+        }
+    }
+
+    void CheckBounds()
+    {
+        // Checagem de limites (mantendo a lógica original)
+        Vector3 position = transform.position;
+
+        if (position.x < minX || position.x > maxX ||
+            position.y < minY || position.y > maxY ||
+            position.z < minZ || position.z > maxZ)
+        {
+            Reset();
+        }
+    }
+}
