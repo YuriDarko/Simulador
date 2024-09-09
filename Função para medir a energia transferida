@@ -1,0 +1,45 @@
+public class SistemaEletrico : MonoBehaviour
+{
+    public float potencial = 1.0f; // Diferença de potencial (voltagem)
+    private int eletronsPassaram = 0; // Contagem de elétrons
+    public float intervaloDeMedicao = 1.0f; // Intervalo de tempo para medição
+    private float tempoDecorrido = 0f;
+
+    void Update()
+    {
+        tempoDecorrido += Time.deltaTime;
+
+        if (tempoDecorrido >= intervaloDeMedicao)
+        {
+            // Medir a corrente
+            float corrente = CalcularCorrente(eletronsPassaram, tempoDecorrido);
+            Debug.Log("Corrente: " + corrente + " A");
+
+            // Calcular a energia transferida
+            float energiaTransferida = CalcularEnergiaTransferida(corrente, potencial);
+            Debug.Log("Energia transferida: " + energiaTransferida + " J");
+
+            // Resetar o contador de elétrons e o tempo
+            eletronsPassaram = 0;
+            tempoDecorrido = 0f;
+        }
+    }
+
+    // Função para calcular a corrente
+    float CalcularCorrente(int numEletrons, float tempo)
+    {
+        return numEletrons / tempo;
+    }
+
+    // Função para calcular a energia transferida
+    float CalcularEnergiaTransferida(float corrente, float potencial)
+    {
+        return corrente * potencial;
+    }
+
+    // Chamada quando um elétron passa pela região de interesse
+    public void EletronPassou()
+    {
+        eletronsPassaram++;
+    }
+}
